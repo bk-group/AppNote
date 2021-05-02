@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/delete_all_notes"
+        android:id="@+id/delete_all_note"
         android:title="Delete all note"></item>
 
     <item

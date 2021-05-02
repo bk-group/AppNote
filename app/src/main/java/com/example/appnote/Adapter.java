@@ -17,12 +17,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
     Context context;
     Activity activity;
-    List<Note> noteList;
+    List<Note> notesList;
 
-    public Adapter(Context context, Activity activity, List<Note> noteList) {
+    public Adapter(Context context, Activity activity, List<Note> notesList) {
         this.context = context;
         this.activity = activity;
-        this.noteList = noteList;
+        this.notesList = notesList;
     }
 
     @NonNull
@@ -35,25 +35,30 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
+        holder.title.setText(notesList.get(position).getTitle());
+        holder.description.setText(notesList.get(position).getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return noteList.size();
+        return notesList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView title, description;
-        private RelativeLayout layout;
+        TextView title, description;        //Dùng ViewHolder để giữ lại, để không cần
+        RelativeLayout layout;              //findViewByID nữa mỗi lần View lên
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.tilte);
+            title = itemView.findViewById(R.id.title);
             description = itemView.findViewById(R.id.description);
             layout = itemView.findViewById(R.id.noteLayout);
 
         }
+    }
+
+    public List<Note> getList() {
+        return notesList;
     }
 }

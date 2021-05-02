@@ -1,12 +1,12 @@
 package com.example.appnote;
 
 public class Note {
-    String title, description, id;
+    String id, title, description;
 
-    public Note(String title, String description, String id) {
+    public Note(String id, String title, String description) {
+        this.id = id;
         this.title = title;
         this.description = description;
-        this.id = id;
     }
 
     public String getTitle() {
