@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     FloatingActionButton fab;
     Adapter adapter;
-    List<Note> notesList = new ArrayList<>();
+    List<Note> notesList;
     Database database;
 
     @Override
@@ -38,14 +38,20 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        database = new Database(this);
-        fetchAllNoteFromDatabase();
 
-//        notesList = new ArrayList<>();
+        notesList = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this, MainActivity.this, notesList);
         recyclerView.setAdapter(adapter);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        notesList.clear();
+        database = new Database(this);
+        fetchAllNoteFromDatabase();
+        adapter.notifyDataSetChanged();
     }
 
     private void fetchAllNoteFromDatabase() {
@@ -83,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteAllNote() {
         Database db = new Database(MainActivity.this);
         db.deleteAllNote();
-        recreate();
+        notesList.clear();
+        adapter.notifyDataSetChanged();
     }
 }

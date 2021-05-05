@@ -52,12 +52,28 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(ColumnDescription, description);
 
         //Thêm data vào database bằng lệnh Insert
-        long resultVale = db.insert(TableName, null, contentValues);
+        long resultValue = db.insert(TableName, null, contentValues);
 
-        if (resultVale == -1) {
+        if (resultValue == -1) {
             Toast.makeText(context, "Data not added", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "Data addded", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void updateNote(String title, String description, String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ColumnTitle, title);
+        contentValues.put(ColumnDescription,description);
+
+        long resultValue = db.update(TableName, contentValues, "id=?", new String[]{id});
+
+        if (resultValue == -1) {
+            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -78,4 +94,7 @@ public class Database extends SQLiteOpenHelper {
         String query = "DELETE FROM " + TableName;
         db.execSQL(query);
     }
+
+
+
 }
