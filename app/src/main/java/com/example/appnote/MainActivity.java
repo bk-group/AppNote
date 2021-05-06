@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
         notesList = new ArrayList<>();
 
-        database = new Database(this);
-        fetchAllNoteFromDatabase();
+        /*database = new Database(this);
+        fetchAllNoteFromDatabase();*/
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this, notesList);
@@ -48,13 +48,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_CANCELED && requestCode == 123) {
+            notesList.clear();
+            database = new Database(this);
+            fetchAllNoteFromDatabase();
+            adapter.notifyDataSetChanged();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }*/
+
+    @Override
     protected void onResume() {
         super.onResume();
         notesList.clear();
         database = new Database(this);
         fetchAllNoteFromDatabase();
         adapter.notifyDataSetChanged();
-    }*/
+    }
 
     private void fetchAllNoteFromDatabase() {
         Cursor cursor = database.getAllList();

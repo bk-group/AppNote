@@ -25,7 +25,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
     public Adapter(Context context, List<Note> notesList) {
         this.context = context;
         this.notesList = notesList;
-        newNotesList = new ArrayList<>(notesList);
+        newNotesList = notesList;
     }
 
     @NonNull
@@ -89,8 +89,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
             if (constraint == null || constraint.length() == 0) {
                 newNotesList = notesList;
             } else {
-                String search = constraint.toString().toLowerCase().trim();     //luu tru chuoi tim kiem
-                for (Note i : newNotesList) {
+                String search = constraint.toString().toLowerCase();     //luu tru chuoi tim kiem
+                for (Note i : notesList) {
                     if (i.getTitle().toLowerCase().contains(search)) {
                         filteredList.add(i);
                     }
