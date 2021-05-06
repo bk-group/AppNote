@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,19 +39,22 @@ public class MainActivity extends AppCompatActivity {
 
         notesList = new ArrayList<>();
 
+        database = new Database(this);
+        fetchAllNoteFromDatabase();
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new Adapter(this, MainActivity.this, notesList);
+        adapter = new Adapter(this, notesList);
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
         notesList.clear();
         database = new Database(this);
         fetchAllNoteFromDatabase();
         adapter.notifyDataSetChanged();
-    }
+    }*/
 
     private void fetchAllNoteFromDatabase() {
         Cursor cursor = database.getAllList();

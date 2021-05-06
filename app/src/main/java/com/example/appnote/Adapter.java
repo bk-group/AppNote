@@ -1,6 +1,5 @@
 package com.example.appnote;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -20,13 +19,11 @@ import java.util.List;
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implements Filterable {
 
     Context context;
-    Activity activity;
     List<Note> notesList;
     List<Note> newNotesList;
 
-    public Adapter(Context context, Activity activity, List<Note> notesList) {
+    public Adapter(Context context, List<Note> notesList) {
         this.context = context;
-        this.activity = activity;
         this.notesList = notesList;
         newNotesList = new ArrayList<>(notesList);
     }
@@ -41,23 +38,21 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.title.setText(notesList.get(position).getTitle());
-        holder.description.setText(notesList.get(position).getDescription());
+        holder.title.setText(newNotesList.get(position).getTitle());
+        holder.description.setText(newNotesList.get(position).getDescription());
 
         holder.layout.setOnClickListener(v -> {
             Intent intent = new Intent(context, UpdateNoteActivity.class);
 
-            intent.putExtra("title", notesList.get(position).getTitle());
-            intent.putExtra("description", notesList.get(position).getDescription());
-            intent.putExtra("id", notesList.get(position).getId());
-
-            activity.startActivity(intent);
+            intent.putExtra("title", newNotesList.get(position).getTitle());
+            intent.putExtra("description", newNotesList.get(position).getDescription());
+            intent.putExtra("id", newNotesList.get(position).getId());
         });
     }
 
     @Override
     public int getItemCount() {
-        return notesList.size();
+        return newNotesList.size();
     }
 
 
@@ -92,7 +87,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
             List<Note> filteredList = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(newNotesList);
+                newNotesList = notesList;
             } else {
                 String search = constraint.toString().toLowerCase().trim();     //luu tru chuoi tim kiem
                 for (Note i : newNotesList) {
@@ -100,17 +95,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
                         filteredList.add(i);
                     }
                 }
+                newNotesList = filteredList;
             }
             FilterResults results = new FilterResults();
-            results.values = filteredList;
+            results.values = newNotesList;
             return results;
         }
 
         //de xuat ket qua
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            notesList.clear();
-            notesList.addAll((List)results.values);
+            newNotesList = (List<Note>) results.values;
             notifyDataSetChanged();
         }
     };
