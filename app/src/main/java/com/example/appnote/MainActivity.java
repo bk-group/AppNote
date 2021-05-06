@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-
         notesList = new ArrayList<>();
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this, MainActivity.this, notesList);
         recyclerView.setAdapter(adapter);
@@ -74,6 +74,19 @@ public class MainActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.search_bar);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint("Search Notes Here");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return true;
+            }
+        });
 
         return super.onCreateOptionsMenu(menu);
     }

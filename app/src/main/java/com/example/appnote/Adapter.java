@@ -6,24 +6,29 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
+public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implements Filterable {
 
     Context context;
     Activity activity;
     List<Note> notesList;
+    List<Note> newNotesList;
 
     public Adapter(Context context, Activity activity, List<Note> notesList) {
         this.context = context;
         this.activity = activity;
         this.notesList = notesList;
+        newNotesList = new ArrayList<>(notesList);
     }
 
     @NonNull
@@ -55,6 +60,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
         return notesList.size();
     }
 
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView title, description;        //Dùng ViewHolder để giữ lại, để không cần
         RelativeLayout layout;              //findViewByID nữa mỗi lần View lên
@@ -72,4 +78,41 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     public List<Note> getList() {
         return notesList;
     }
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+
+    private Filter exampleFilter = new Filter() {
+
+        //loc ket qua
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Note> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(newNotesList);
+            } else {
+                String search = constraint.toString().toLowerCase().trim();     //luu tru chuoi tim kiem
+                for (Note i : newNotesList) {
+                    if (i.getTitle().toLowerCase().contains(search)) {
+                        filteredList.add(i);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        //de xuat ket qua
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            notesList.clear();
+            notesList.addAll((List)results.values);
+            notifyDataSetChanged();
+        }
+    };
+
 }
