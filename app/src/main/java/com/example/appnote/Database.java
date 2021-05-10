@@ -96,5 +96,14 @@ public class Database extends SQLiteOpenHelper {
     }
 
 
+    public void deleteSingleItem(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        long result = db.delete(TableName, "id=?", new String[]{id});
+        if (result == -1){
+            Toast.makeText(context, "Item not deleted", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

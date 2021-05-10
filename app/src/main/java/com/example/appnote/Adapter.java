@@ -1,7 +1,6 @@
 package com.example.appnote;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
     List<Note> notesList;
     List<Note> newNotesList;
 
-    public Adapter(Context context, List<Note> notesList) {
+    OnHandleClickListener onHandleClickListener;
+
+    public Adapter(Context context, List<Note> notesList, OnHandleClickListener onHandleClickListener) {
         this.context = context;
         this.notesList = notesList;
         newNotesList = notesList;
+        this.onHandleClickListener = onHandleClickListener;
     }
 
     @NonNull
@@ -41,13 +43,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
         holder.title.setText(newNotesList.get(position).getTitle());
         holder.description.setText(newNotesList.get(position).getDescription());
 
-        holder.layout.setOnClickListener(v -> {
-            Intent intent = new Intent(context, UpdateNoteActivity.class);
-
-            intent.putExtra("title", newNotesList.get(position).getTitle());
-            intent.putExtra("description", newNotesList.get(position).getDescription());
-            intent.putExtra("id", newNotesList.get(position).getId());
-        });
+        holder.layout.setOnClickListener(v -> onHandleClickListener.handClick(newNotesList.get(position)));
     }
 
     @Override
@@ -70,9 +66,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
         }
     }
 
-    public List<Note> getList() {
-        return notesList;
-    }
+
 
     @Override
     public Filter getFilter() {
@@ -109,5 +103,23 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> implemen
             notifyDataSetChanged();
         }
     };
+
+    public interface OnHandleClickListener {
+        void handClick(Note note);
+    }
+
+    public List<Note> getList() {
+        return notesList;
+    }
+
+    public void removeItem(int position) {
+        notesList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void unDo(Note item, int position) {
+        notesList.add(position, item);
+        notifyItemInserted(position);
+    }
 
 }
