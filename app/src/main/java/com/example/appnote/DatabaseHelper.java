@@ -10,22 +10,21 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 
-public class Database extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
 
     Context context;
     public static final String DatabaseName = "MyNotes";
     private static final int DatabaseVersion = 1;
 
-    private static final String TableName = "mynotes";
-    private static final String ColumnID = "id";
-    private static final String ColumnTitle = "title";
-    private static final String ColumnDescription = "description";
+    public static final String TableName = "mynotes";
+    public static final String ColumnID = "id";
+    public static final String ColumnTitle = "title";
+    public static final String ColumnDescription = "description";
 
-    public Database(@Nullable Context context) {
+    public DatabaseHelper(@Nullable Context context) {
         super(context, DatabaseName, null, DatabaseVersion);
         this.context = context;
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -66,7 +65,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColumnTitle, title);
-        contentValues.put(ColumnDescription,description);
+        contentValues.put(ColumnDescription, description);
 
         long resultValue = db.update(TableName, contentValues, "id=?", new String[]{id});
 
@@ -78,7 +77,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Đọc hết database
-    public Cursor getAllList(){
+    public Cursor getAllList() {
         String query = "SELECT * FROM " + TableName;
         SQLiteDatabase database = this.getReadableDatabase();
 
@@ -100,7 +99,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         long result = db.delete(TableName, "id=?", new String[]{id});
-        if (result == -1){
+        if (result == -1) {
             Toast.makeText(context, "Item not deleted", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();

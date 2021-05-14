@@ -30,7 +30,7 @@ public class UpdateNoteActivity extends AppCompatActivity {
 
         btnUpdateNote.setOnClickListener(v -> {
             if(!TextUtils.isEmpty(title.getText().toString()) || !TextUtils.isEmpty(description.getText().toString())){
-                Database db = new Database(UpdateNoteActivity.this);
+                DatabaseHelper db = new DatabaseHelper(UpdateNoteActivity.this);
                 db.updateNote(title.getText().toString(), description.getText().toString(), id);
                 finish();
             }

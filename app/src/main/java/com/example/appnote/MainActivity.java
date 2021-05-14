@@ -23,12 +23,12 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Adapter.OnHandleClickListener {
+public class MainActivity extends AppCompatActivity implements Adapter.OnHandleClickListener, OnDatabaseChangeListener {
     RecyclerView recyclerView;
     FloatingActionButton fab;
     Adapter adapter;
-    List<Note> notesList;
-    Database database;
+    List<Note> notesList = new ArrayList<>();
+    DatabaseHelper databaseHelper;
     CoordinatorLayout coordinatorLayout;
 
     @Override
@@ -43,43 +43,55 @@ public class MainActivity extends AppCompatActivity implements Adapter.OnHandleC
             startActivity(intent);
         });
 
-        notesList = new ArrayList<>();
+//        notesList = new ArrayList<>();
         coordinatorLayout = findViewById(R.id.layout_main);
+
+        DatabaseManager.getInstance(this).addDatabaseChangeListener(this);
 
 
         /*database = new Database(this);
         fetchAllNoteFromDatabase();*/
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new Adapter(this, notesList,this::handClick);
-        recyclerView.setAdapter(adapter);
+        /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(this, notesList, this::handClick);
+        recyclerView.setAdapter(adapter);*/
 
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerView);
     }
 
+    private void initAdapter() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(this, notesList, this::handClick);
+        recyclerView.setAdapter(adapter);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        notesList.clear();
-        database = new Database(this);
-        fetchAllNoteFromDatabase();
-        adapter.notifyDataSetChanged();
+//        notesList.clear();
+//        databaseHelper = new DatabaseHelper(this);
+//        fetchAllNoteFromDatabase();
+//        adapter.notifyDataSetChanged();
+        DatabaseManager.getInstance(this).refresh();
     }
 
-    private void fetchAllNoteFromDatabase() {
-        Cursor cursor = database.getAllList();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseManager.getInstance(this).removeDatabaseChangeListener(this::onDataBaseChanged);
+    }
+
+    /*private void fetchAllNoteFromDatabase() {
+        Cursor cursor = databaseHelper.getAllList();
         if (cursor.getCount() == 0) {
             Toast.makeText(this, "No data to show", Toast.LENGTH_SHORT).show();
         } else {
             while (cursor.moveToNext()) {
-//                String title = cursor.getString(1);
-//                String description = cursor.getString(2);
-//                String id = cursor.getString(0);
                 notesList.add(new Note(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
         }
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.OnHandleC
     }
 
     private void deleteAllNote() {
-        Database db = new Database(MainActivity.this);
+        DatabaseHelper db = new DatabaseHelper(MainActivity.this);
         db.deleteAllNote();
         notesList.clear();
         adapter.notifyDataSetChanged();
@@ -142,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.OnHandleC
             adapter.removeItem(position);
 
 
-            Snackbar snackbar = Snackbar.make(coordinatorLayout,"Item deleted", Snackbar.LENGTH_LONG)
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, "Item deleted", Snackbar.LENGTH_LONG)
                     .setAction("UNDO", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -154,14 +166,24 @@ public class MainActivity extends AppCompatActivity implements Adapter.OnHandleC
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
 
-                            if (!(event==DISMISS_EVENT_ACTION)){
-                                Database db = new Database(MainActivity.this);
+                            /*if (!(event==DISMISS_EVENT_ACTION)){
+                                DatabaseHelper db = new DatabaseHelper(MainActivity.this);
                                 db.deleteSingleItem(item.getId());
-                            }
+                            }*/
                         }
                     });
             snackbar.show();
         }
     };
 
+    @Override
+    public void onDataBaseChanged(ArrayList<Note> notes) {
+        if (adapter != null) {
+            notesList.clear();
+            notesList.addAll(notes);
+            adapter.notifyDataSetChanged();
+        } else  {
+            initAdapter();
+        }
+    }
 }

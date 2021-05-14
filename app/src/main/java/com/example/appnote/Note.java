@@ -1,10 +1,13 @@
 package com.example.appnote;
 
 public class Note {
-    String id, title, description;
+    Integer id;
+    String title, description;
 
-    public Note(String id, String title, String description) {
-        this.id = id;
+    public Note() {
+    }
+
+    public Note(String title, String description) {
         this.title = title;
         this.description = description;
     }
@@ -25,11 +28,11 @@ public class Note {
         this.description = description;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 }
